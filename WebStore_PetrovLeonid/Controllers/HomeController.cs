@@ -10,7 +10,8 @@ namespace WebStore_PetrovLeonid.Controllers
     {
         public IActionResult Index()
         {
-            return Content("First controller action");
+            //return Content("First controller action");
+            return View();
         }
 
         public IActionResult SecondAction()
