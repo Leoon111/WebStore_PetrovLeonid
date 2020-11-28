@@ -16,11 +16,7 @@ namespace WebStore_PetrovLeonid.Controllers
             new Employee() {Id = 1, LastName = "Михайлов", FirstName = "Михаил", Patronymic = "Михайлович", Age = 60}
         };
 
-        public IActionResult Index()
-        {
-            //return Content("First controller action");
-            return View();
-        }
+        public IActionResult Index() => View();
 
         public IActionResult SecondAction()
         {
