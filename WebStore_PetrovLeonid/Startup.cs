@@ -18,6 +18,7 @@ namespace WebStore_PetrovLeonid
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllersWithViews();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -27,16 +28,16 @@ namespace WebStore_PetrovLeonid
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseRouting();
+            app.UseStaticFiles();
 
-            var greetings = _configuration["greetings"];
+            app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync(greetings);
-                });
+                endpoints.MapGet("/greetings", async ctx => await ctx.Response.WriteAsync(_configuration["greetings"]));
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }
