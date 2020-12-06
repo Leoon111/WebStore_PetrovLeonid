@@ -10,8 +10,6 @@ namespace WebStore_PetrovLeonid.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index() => View();
-
         public IActionResult SecondAction()
         {
             return Content("Second controller action");
@@ -22,6 +20,7 @@ namespace WebStore_PetrovLeonid.Controllers
             return View(TestData.Employees);
         }
 
+        public IActionResult Index() => View();
         public IActionResult Blogs() => View();
         public IActionResult BlogSingle() => View();
         public IActionResult Cart() => View();
