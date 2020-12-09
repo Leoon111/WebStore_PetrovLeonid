@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using WebStore_PetrovLeonid.Infrastructure.Conventions;
+using WebStore_PetrovLeonid.Infrastructure.Middleware;
 
 namespace WebStore_PetrovLeonid
 {
@@ -18,7 +20,12 @@ namespace WebStore_PetrovLeonid
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            services
+                .AddControllersWithViews(otp =>
+                {
+                    //otp.Conventions.Add(new WebStoreControllerConvention());
+                })
+                .AddRazorRuntimeCompilation();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -31,6 +38,17 @@ namespace WebStore_PetrovLeonid
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            //app.UseMiddleware<TestMiddleware>();
+            //app.UseMiddleware(typeof(TestMiddleware));
+
+            app.Map(
+                "/Hello",
+                context => context.Run(async request => request.Response.WriteAsync("Hello word!")));
+            
+            app.MapWhen(
+                context => context.Request.Query.ContainsKey("id") && context.Request.Query["id"] == "5",
+                context => context.Run(async request => request.Response.WriteAsync("Hello word with id:5!")));
 
             app.UseEndpoints(endpoints =>
             {
