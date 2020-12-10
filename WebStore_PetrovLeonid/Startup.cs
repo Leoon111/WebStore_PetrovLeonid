@@ -44,11 +44,11 @@ namespace WebStore_PetrovLeonid
 
             app.Map(
                 "/Hello",
-                context => context.Run(async request => request.Response.WriteAsync("Hello word!")));
+                context => context.Run(async request => await request.Response.WriteAsync("Hello word!")));
             
             app.MapWhen(
                 context => context.Request.Query.ContainsKey("id") && context.Request.Query["id"] == "5",
-                context => context.Run(async request => request.Response.WriteAsync("Hello word with id:5!")));
+                context => context.Run(async request => await request.Response.WriteAsync("Hello word with id:5!")));
 
             app.UseEndpoints(endpoints =>
             {
