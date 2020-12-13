@@ -9,7 +9,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using WebStore_PetrovLeonid.Infrastructure.Conventions;
+using WebStore_PetrovLeonid.Infrastructure.Interfaces;
 using WebStore_PetrovLeonid.Infrastructure.Middleware;
+using WebStore_PetrovLeonid.Infrastructure.Services;
 
 namespace WebStore_PetrovLeonid
 {
@@ -20,6 +22,8 @@ namespace WebStore_PetrovLeonid
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<IEmployeesData, InMemoryEmployeesData>();
+            
             services
                 .AddControllersWithViews(otp =>
                 {
