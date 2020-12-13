@@ -24,11 +24,13 @@ namespace WebStore_PetrovLeonid.Controllers
         public IActionResult Details(int id)
         {
             var employee = _employees.Get(id);
-            if(employee is not null)
+            if (employee is not null)
                 return View(employee);
 
             return NotFound();
         }
+
+        public IActionResult Create() => View("Edit", new EmployeesViewModel());
 
         #region Edit
 
@@ -38,12 +40,15 @@ namespace WebStore_PetrovLeonid.Controllers
         /// <param name="id">id сотрудника</param>
         /// <returns>модель сотрудника из базы</returns>
         [HttpGet]
-        public IActionResult Edit(int id)
+        public IActionResult Edit(int? id)
         {
+            if (id is null)
+                return View(new EmployeesViewModel());
+
             if (id < 0)
                 return BadRequest();
 
-            var employee = _employees.Get(id);
+            var employee = _employees.Get((int)id);
             if (employee is null)
                 return NotFound();
 
@@ -76,8 +81,11 @@ namespace WebStore_PetrovLeonid.Controllers
                 Patronymic = model.Patronymic,
                 Age = model.Age,
             };
-            
-            _employees.Update(employee);
+
+            if (employee.Id == 0)
+                _employees.Add(employee);
+            else
+                _employees.Update(employee);
 
             return RedirectToAction("Index");
         }
