@@ -7,33 +7,60 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using WebStore_PetrovLeonid.Infrastructure.Conventions;
+using WebStore_PetrovLeonid.Infrastructure.Interfaces;
+using WebStore_PetrovLeonid.Infrastructure.Middleware;
+using WebStore_PetrovLeonid.Infrastructure.Services;
 
 namespace WebStore_PetrovLeonid
 {
     public class Startup
     {
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+        private readonly IConfiguration _configuration;
+        public Startup(IConfiguration configuration) => _configuration = configuration;
+
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<IEmployeesData, InMemoryEmployeesData>();
+            
+            services
+                .AddControllersWithViews(otp =>
+                {
+                    //otp.Conventions.Add(new WebStoreControllerConvention());
+                })
+                .AddRazorRuntimeCompilation();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseBrowserLink();
             }
+
+            app.UseStaticFiles();
 
             app.UseRouting();
 
+            //app.UseMiddleware<TestMiddleware>();
+            //app.UseMiddleware(typeof(TestMiddleware));
+
+            app.Map(
+                "/Hello",
+                context => context.Run(async request => await request.Response.WriteAsync("Hello word!")));
+            
+            app.MapWhen(
+                context => context.Request.Query.ContainsKey("id") && context.Request.Query["id"] == "5",
+                context => context.Run(async request => await request.Response.WriteAsync("Hello word with id:5!")));
+
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Hello World!");
-                });
+                endpoints.MapGet("/greetings", async ctx => await ctx.Response.WriteAsync(_configuration["greetings"]));
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }
